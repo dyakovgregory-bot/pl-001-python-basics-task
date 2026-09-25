@@ -36,4 +36,3 @@ SEQUENCE_ID_MAX: Final[int] = 2**SEQUENCE_ID_BITS - 1
 
 # Здесь можно добавить собственные вспомогательные константы
 # (например, сдвиги полей при сборке идентификатора).
-TIMESTAMP_SHIFT: Final[int] = NODE_ID_BITS + SEQUENCE_ID_BITS

@@ -22,7 +22,6 @@ from .constants import (
     SEQUENCE_ID_BITS,
     SEQUENCE_ID_MAX,
     TIMESTAMP_MS_MAX,
-    TIMESTAMP_SHIFT,
 )
 
 
@@ -51,7 +50,7 @@ def decode_timestamp_ms(snowflake_id: int, epoch_ms: int = EPOCH_MS_DEFAULT) -> 
         The absolute Unix time in milliseconds at which the identifier was
         generated.
     """
-    return (snowflake_id >> TIMESTAMP_SHIFT) + epoch_ms
+    return (snowflake_id >> (NODE_ID_MAX + SEQUENCE_ID_MAX)) + epoch_ms
 
 
 def decode_node_id(snowflake_id: int) -> int:
@@ -111,14 +110,18 @@ def generate_snowflake_id(
     if not (0 <= node_id <= NODE_ID_MAX):
         print(f"node_id must be in [0, {NODE_ID_MAX}], but is {node_id}")
         return None
-    
+
     if not (0 <= sequence_id <= SEQUENCE_ID_MAX):
         print(f"sequence_id must be in [0, {SEQUENCE_ID_MAX}], but is {sequence_id}")
         return None
-    
-    timestamp: int = read_current_millis(epoch_ms)
+
+    timestamp = read_current_millis(epoch_ms)
     if timestamp > TIMESTAMP_MS_MAX:
         print("timestamp overflows")
         return None
 
-    return  (timestamp << TIMESTAMP_SHIFT) | (node_id << SEQUENCE_ID_BITS) | sequence_id
+    return (
+        (timestamp << (NODE_ID_MAX + SEQUENCE_ID_MAX))
+        | (node_id << SEQUENCE_ID_BITS)
+        | sequence_id
+    )
