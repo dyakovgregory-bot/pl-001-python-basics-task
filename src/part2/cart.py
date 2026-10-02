@@ -75,29 +75,33 @@ def add_to_cart(
         )
         return None
 
-    update_product(storage, product_id, tuple(
-        product_in_storage[NAME_INDEX],
-        product_in_storage[PRICE_INDEX],
-        available_quantity - quantity
-    ))
+    update_product(
+        storage,
+        product_id,
+        (
+            product_in_storage[NAME_INDEX],
+            product_in_storage[PRICE_INDEX],
+            available_quantity - quantity,
+        ),
+    )
 
     final_cartline: CartLine
     product_already_in_cart = False
 
     for cartline_index in range(len(cart)):
         if product_id == cart[cartline_index][LINE_PRODUCT_ID_INDEX]:
-            final_cartline = CartLine(
+            final_cartline = (
                 product_id,
-                cart[cartline_index][LINE_QUANTITY_INDEX] + quantity
+                cart[cartline_index][LINE_QUANTITY_INDEX] + quantity,
             )
             cart[cartline_index] = final_cartline
             product_already_in_cart = True
             break
-    
+
     if not product_already_in_cart:
-        final_cartline = CartLine(product_id, quantity)
+        final_cartline = (product_id, quantity)
         cart.append(final_cartline)
-    
+
     return final_cartline
 
 
@@ -134,7 +138,7 @@ def remove_from_cart(
     if cart_line is None:
         print(f"product {product_id} is not in the cart")
         return None
-    
+
     quantity_in_cart = cart_line[LINE_QUANTITY_INDEX]
     if quantity_in_cart < quantity:
         print(
@@ -142,11 +146,11 @@ def remove_from_cart(
             f"of product {product_id}, cannot remove {quantity}"
         )
         return None
-    
+
     product = read_product(storage, product_id)
     if product is None:
         return None
-    
+
     quantity_in_product = product[QUANTITY_INDEX]
     update_product(
         storage,
@@ -154,7 +158,7 @@ def remove_from_cart(
         (product[NAME_INDEX], product[PRICE_INDEX], quantity_in_product + quantity),
     )
 
-    new_cart_line = CartLine(product_id, quantity_in_cart - quantity)
+    new_cart_line: CartLine = (product_id, quantity_in_cart - quantity)
     cart_line_index = cart.index(cart_line)
 
     if (quantity_in_cart - quantity) != 0:

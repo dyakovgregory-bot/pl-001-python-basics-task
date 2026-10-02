@@ -70,7 +70,7 @@ def create_product(
 
     new_id = generate_product_id(storage)
     new_price = normalize_price(price)
-    new_product_tuple = Product(new_id, name, new_price, quantity)
+    new_product_tuple = (new_id, name, new_price, quantity)
     storage.append(new_product_tuple)
     return new_id
 
@@ -120,7 +120,7 @@ def update_product(
     """
     name, price, quantity = fields
     new_price = normalize_price(price)
-    new_product = Product(product_id, name, new_price, quantity)
+    new_product: Product = (product_id, name, new_price, quantity)
 
     for product_index in range(len(storage)):
         if product_id == storage[product_index][PRODUCT_ID_INDEX]:
